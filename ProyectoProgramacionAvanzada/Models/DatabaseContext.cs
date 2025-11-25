@@ -2,63 +2,47 @@
 
 namespace ProyectoProgramacionAvanzada.Models
 {
-    public class DatabaseContext: DbContext
+    public class DatabaseContext : DbContext
     {
-        public DatabaseContext() : base("MSSConnectionString")
-        {
-        }
+        public DatabaseContext() : base("MSSConnectionString") { }
 
-        public virtual DbSet<Product> product { get; set; }
-        public virtual DbSet<Product_Images> product_images { get; set; }
-        public virtual DbSet<Product_Reviews> product_reviews { get; set; }
-        public virtual DbSet<Role> role { get; set; }
-        public virtual DbSet<User> user { get; set; }
+        public DbSet<Product> product { get; set; }
+        public DbSet<Product_Images> product_images { get; set; }
+        public DbSet<Product_Reviews> product_reviews { get; set; }
+        public DbSet<User> user { get; set; }
+        public DbSet<Role> role { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>()
-                .Property(e => e.name)
-                .IsUnicode(false);
+                .Property(p => p.name).IsUnicode(false);
 
             modelBuilder.Entity<Product>()
-                .Property(e => e.price)
-                .HasPrecision(10, 2);
+                .Property(p => p.price).HasPrecision(10, 2);
 
             modelBuilder.Entity<Product>()
-                .HasMany(e => e.product_images)
-                .WithRequired(e => e.product)
-                .HasForeignKey(e => e.product_id);
+                .HasMany(p => p.product_images)
+                .WithRequired(pi => pi.product)
+                .HasForeignKey(pi => pi.product_id);
 
             modelBuilder.Entity<Product>()
-                .HasMany(e => e.product_reviews)
-                .WithRequired(e => e.product)
-                .HasForeignKey(e => e.product_id);
+                .HasMany(p => p.product_reviews)
+                .WithRequired(pr => pr.product)
+                .HasForeignKey(pr => pr.product_id);
 
-            modelBuilder.Entity<Product_Images>()
-                .Property(e => e.image_url)
-                .IsUnicode(false);
+            modelBuilder.Entity<User>()
+                .Property(u => u.username).IsUnicode(false);
 
-            modelBuilder.Entity<Product_Reviews>()
-                .Property(e => e.content)
-                .IsUnicode(false);
+            modelBuilder.Entity<User>()
+                .Property(u => u.hashed_password).IsUnicode(false);
 
             modelBuilder.Entity<Role>()
-                .HasMany(e => e.user)
-                .WithMany(e => e.role)
+                .HasMany(r => r.user)
+                .WithMany(u => u.role)
                 .Map(m => m.ToTable("user_role"));
-
-            modelBuilder.Entity<User>()
-                .Property(e => e.username)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<User>()
-                .Property(e => e.hashed_password)
-                .IsUnicode(false);
-
-            modelBuilder.Entity<User>()
-                .HasMany(e => e.product_reviews)
-                .WithRequired(e => e.user)
-                .HasForeignKey(e => e.author_id);
         }
     }
 }
