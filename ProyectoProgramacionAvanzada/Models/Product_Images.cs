@@ -6,14 +6,16 @@ namespace ProyectoProgramacionAvanzada.Models
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
 
-    public partial class Product_Images
+
     {
-        public int id { get; set; }
+        [Table("product_images")]
+        public class Product_Images
+        {
+            public int id { get; set; }
+            public int product_id { get; set; }
+            public string image_url { get; set; }
 
-        public int product_id { get; set; }
-
-        public string image_url { get; set; }
-
-        public virtual Product product { get; set; }
+            public virtual Product product { get; set; }
+        }
     }
-}
+
