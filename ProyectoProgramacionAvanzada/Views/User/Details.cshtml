@@ -1,28 +1,30 @@
-@model ProyectoProgramacionAvanzada.Models.User
+@model ProyectoProgramacionAvanzada.Models.Product
 
 @{
     ViewBag.Title = "Detalles del Usuario";
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2>@ViewBag.Title</h2>
 
-<div>
-  <dl>
-    <dt>Id</dt>
-    <dd>@Model.id</dd>
+            <dl>
+                <dt>Id</dt>
+                <dd>@Model.id</dd>
 
-    <dt>Usuario</dt>
-    <dd>@Model.username</dd>
+                <dt>Usuario</dt>
+                <dd>@Model.username</dd>
 
-    <dt>Última conexión</dt>
-    <dd>@(Model.last_connection.HasValue ? Model.last_connection.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</dd>
+                <dt>Última conexión</dt>
+                <dd>@(Model.last_connection.HasValue ? Model.last_connection.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</dd>
 
-    <dt>Habilitado</dt>
-    <dd>@(Model.enabled ? "Sí" : "No")</dd>
-  </dl>
-</div>
+                <dt>Habilitado</dt>
+                <dd>@(Model.enabled ? "Sí" : "No")</dd>
+            </dl>
 
-<div>
-  <a href="@Url.Action("Edit", "User", new { id = Model.id })" class="btn btn-warning">Editar</a>
-  <a href="@Url.Action("Index", "User")" class="btn btn-default">Volver al listado</a>
+            <a href="@Url.Action("Edit", "User", new { id = Model.id })" class="btn btn-warning">Editar</a>
+            <a href="@Url.Action("Index", "User")" class="btn btn-default">Volver al listado</a>
+        </div>
+    </div>
 </div>
