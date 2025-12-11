@@ -1,0 +1,40 @@
+@model ProyectoProgramacionAvanzada.Models.Product
+
+@{
+    ViewBag.Title = "Eliminar Producto";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>¿Está seguro que desea eliminar este producto?</h3>
+
+<div>
+  <dl>
+    <dt>Id</dt>
+    <dd>@Model.id</dd>
+
+    <dt>Nombre</dt>
+    <dd>@Model.name</dd>
+
+    <dt>Precio</dt>
+    <dd>@Model.price.ToString("C")</dd>
+
+    <dt>Stock</dt>
+    <dd>@Model.stock</dd>
+
+    <dt>Estado</dt>
+    <dd>@(Model.status ? "Activo" : "Inactivo")</dd>
+
+    <dt>Fecha de creación</dt>
+    <dd>@Model.created_at.ToString("dd/MM/yyyy HH:mm")</dd>
+  </dl>
+</div>
+
+@using (Html.BeginForm("Delete", "Product", FormMethod.Post))
+{
+  @Html.AntiForgeryToken()
+  @Html.HiddenFor(m => m.id)
+
+  <button type="submit" class="btn btn-danger">Eliminar</button>
+  <a href="@Url.Action("Index", "Product")" class="btn btn-default">Cancelar</a>
+}

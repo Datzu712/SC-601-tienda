@@ -1,0 +1,48 @@
+@model IEnumerable<ProyectoProgramacionAvanzada.Models.User>
+
+@{
+    ViewBag.Title = "Gestión de Usuarios";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+  <a href="@Url.Action("Create", "User")" class="btn btn-primary">Crear nuevo usuario</a>
+</div>
+
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Usuario</th>
+      <th>Última conexión</th>
+      <th>Habilitado</th>
+      <th style="width: 180px;">Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    @if (Model != null && Model.Any())
+    {
+      foreach (var item in Model)
+      {
+        <tr>
+          <td>@item.id</td>
+          <td>@item.username</td>
+          <td>@(item.last_connection.HasValue ? item.last_connection.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")</td>
+          <td>@(item.enabled ? "Sí" : "No")</td>
+          <td>
+            <a href="@Url.Action("Details", "User", new { id = item.id })" class="btn btn-sm btn-info">Detalles</a>
+            <a href="@Url.Action("Edit", "User", new { id = item.id })" class="btn btn-sm btn-warning">Editar</a>
+            <a href="@Url.Action("Delete", "User", new { id = item.id })" class="btn btn-sm btn-danger">Eliminar</a>
+          </td>
+        </tr>
+      }
+    }
+    else
+    {
+      <tr>
+        <td colspan="5">No hay usuarios registrados.</td>
+      </tr>
+    }
+  </tbody>
+</table>

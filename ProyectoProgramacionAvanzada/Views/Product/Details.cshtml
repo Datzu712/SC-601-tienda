@@ -1,0 +1,34 @@
+@model ProyectoProgramacionAvanzada.Models.Product
+
+@{
+    ViewBag.Title = "Detalles del Producto";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+  <dl>
+    <dt>Id</dt>
+    <dd>@Model.id</dd>
+
+    <dt>Nombre</dt>
+    <dd>@Model.name</dd>
+
+    <dt>Precio</dt>
+    <dd>@Model.price.ToString("C")</dd>
+
+    <dt>Stock</dt>
+    <dd>@Model.stock</dd>
+
+    <dt>Estado</dt>
+    <dd>@(Model.status ? "Activo" : "Inactivo")</dd>
+
+    <dt>Fecha de creación</dt>
+    <dd>@Model.created_at.ToString("dd/MM/yyyy HH:mm")</dd>
+  </dl>
+</div>
+
+<div>
+  <a href="@Url.Action("Edit", "Product", new { id = Model.id })" class="btn btn-warning">Editar</a>
+  <a href="@Url.Action("Index", "Product")" class="btn btn-default">Volver al listado</a>
+</div>

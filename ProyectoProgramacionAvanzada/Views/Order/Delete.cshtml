@@ -1,0 +1,34 @@
+@model ProyectoProgramacionAvanzada.Models.Order
+
+@{
+    ViewBag.Title = "Eliminar Orden";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>¿Está seguro que desea eliminar esta orden?</h3>
+
+<div>
+  <dl>
+    <dt>Id</dt>
+    <dd>@Model.OrderId</dd>
+
+    <dt>Usuario ID</dt>
+    <dd>@Model.UserId</dd>
+
+    <dt>Total</dt>
+    <dd>@Model.Total.ToString("C")</dd>
+
+    <dt>Fecha de creación</dt>
+    <dd>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+  </dl>
+</div>
+
+@using (Html.BeginForm("Delete", "Order", FormMethod.Post))
+{
+  @Html.AntiForgeryToken()
+  @Html.HiddenFor(m => m.OrderId)
+
+  <button type="submit" class="btn btn-danger">Eliminar</button>
+  <a href="@Url.Action("Index", "Order")" class="btn btn-default">Cancelar</a>
+}

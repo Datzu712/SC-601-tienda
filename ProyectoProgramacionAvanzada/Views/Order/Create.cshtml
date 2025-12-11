@@ -1,0 +1,25 @@
+@model ProyectoProgramacionAvanzada.Models.Order
+
+@{
+    ViewBag.Title = "Crear Orden";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Create", "Order", FormMethod.Post))
+{
+  @Html.AntiForgeryToken()
+
+  <div class="form-group">
+    <label for="UserId">Usuario ID</label>
+    @Html.TextBoxFor(m => m.UserId, new { @class = "form-control", type = "number", required = "required" })
+  </div>
+
+  <div class="form-group">
+    <label for="Total">Total</label>
+    @Html.TextBoxFor(m => m.Total, new { @class = "form-control", type = "number", step = "0.01", required = "required" })
+  </div>
+
+  <button type="submit" class="btn btn-primary">Crear</button>
+  <a href="@Url.Action("Index", "Order")" class="btn btn-default">Cancelar</a>
+}

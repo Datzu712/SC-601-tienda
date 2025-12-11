@@ -1,0 +1,27 @@
+@model ProyectoProgramacionAvanzada.Models.Order
+
+@{
+    ViewBag.Title = "Detalles de la Orden";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+  <dl>
+    <dt>Id</dt>
+    <dd>@Model.OrderId</dd>
+
+    <dt>Usuario ID</dt>
+    <dd>@Model.UserId</dd>
+
+    <dt>Total</dt>
+    <dd>@Model.Total.ToString("C")</dd>
+
+    <dt>Fecha de creación</dt>
+    <dd>@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+  </dl>
+</div>
+
+<div>
+  <a href="@Url.Action("Index", "Order")" class="btn btn-default">Volver al listado</a>
+</div>
