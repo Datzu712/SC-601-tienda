@@ -7,20 +7,18 @@ namespace ProyectoProgramacionAvanzada.Models
     using System.Data.Entity.Spatial;
 
     public partial class Product_Reviews
-    {
-        public int id { get; set; }
+        {
+            public int id { get; set; }
 
-        [Required]
-        public string content { get; set; }
+            [Required]
+            public string content { get; set; }
 
-        public bool approved { get; set; }
+            public bool approved { get; set; }
 
-        public int product_id { get; set; }
+            public int product_id { get; set; }
+            public int author_id { get; set; }
 
-        public int author_id { get; set; }
-
-        public virtual Product product { get; set; }
-
-        public virtual User user { get; set; }
+            public virtual Product product { get; set; }
+            public virtual User user { get; set; }
+        }
     }
-}
