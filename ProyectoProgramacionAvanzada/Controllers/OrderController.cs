@@ -1,86 +1,100 @@
-﻿using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
-using System.Data.Entity;
 using ProyectoProgramacionAvanzada.Models;
 
 namespace ProyectoProgramacionAvanzada.Controllers
 {
     public class OrderController : Controller
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private static List<Order> orders = new List<Order>
+        {
+            new Order { OrderId = 1, UserId = 1, Total = 150.00m, CreatedAt = DateTime.Now.AddDays(-5) },
+            new Order { OrderId = 2, UserId = 2, Total = 275.50m, CreatedAt = DateTime.Now.AddDays(-3) },
+            new Order { OrderId = 3, UserId = 1, Total = 89.99m, CreatedAt = DateTime.Now.AddDays(-1) }
+        };
 
-        // GET: Order
         public ActionResult Index()
         {
-            var orders = db.Orders
-                .Include(o => o.User)
-                .ToList();
-
             return View(orders);
         }
 
-        // GET: Order/Details/5
         public ActionResult Details(int id)
         {
-            var order = db.Orders
-                .Include(o => o.Items)
-                .Include(o => o.User)
-                .FirstOrDefault(o => o.Id == id);
-
+            var order = orders.FirstOrDefault(o => o.OrderId == id);
             if (order == null)
             {
                 return HttpNotFound();
             }
-
             return View(order);
         }
 
-        // GET: Order/Create
         public ActionResult Create()
         {
-            ViewBag.UserId = new SelectList(db.Users, "Id", "Nombre");
             return View();
         }
 
-        // POST: Order/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Order order)
         {
             if (ModelState.IsValid)
             {
-                order.Fecha = System.DateTime.Now;
-                db.Orders.Add(order);
-                db.SaveChanges();
+                order.OrderId = orders.Any() ? orders.Max(o => o.OrderId) + 1 : 1;
+                order.CreatedAt = DateTime.Now;
+                orders.Add(order);
                 return RedirectToAction("Index");
             }
-
-            ViewBag.UserId = new SelectList(db.Users, "Id", "Nombre", order.UserId);
             return View(order);
         }
 
-        // GET: Order/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Edit(int id)
         {
-            var order = db.Orders.Find(id);
-
+            var order = orders.FirstOrDefault(o => o.OrderId == id);
             if (order == null)
             {
                 return HttpNotFound();
             }
-
             return View(order);
         }
 
-        // POST: Order/Delete
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Order order)
+        {
+            if (ModelState.IsValid)
+            {
+                var existingOrder = orders.FirstOrDefault(o => o.OrderId == order.OrderId);
+                if (existingOrder != null)
+                {
+                    existingOrder.UserId = order.UserId;
+                    existingOrder.Total = order.Total;
+                }
+                return RedirectToAction("Index");
+            }
+            return View(order);
+        }
+
+        public ActionResult Delete(int id)
+        {
+            var order = orders.FirstOrDefault(o => o.OrderId == id);
+            if (order == null)
+            {
+                return HttpNotFound();
+            }
+            return View(order);
+        }
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            var order = db.Orders.Find(id);
-
-            db.Orders.Remove(order);
-            db.SaveChanges();
+            var order = orders.FirstOrDefault(o => o.OrderId == id);
+            if (order != null)
+            {
+                orders.Remove(order);
+            }
             return RedirectToAction("Index");
         }
     }
