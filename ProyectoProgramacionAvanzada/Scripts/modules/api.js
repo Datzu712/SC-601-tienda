@@ -57,6 +57,7 @@ export class DataFetcher {
             retryDelay: 1000,
             enabled: true,
             fetchOnMount: true,
+            fetchOnWindowFocus: true,
             ...options
         };
 

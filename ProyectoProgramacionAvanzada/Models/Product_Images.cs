@@ -5,9 +5,7 @@ namespace ProyectoProgramacionAvanzada.Models
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Data.Entity.Spatial;
-
-
-    {
+    
         [Table("product_images")]
         public class Product_Images
         {
@@ -17,5 +15,5 @@ namespace ProyectoProgramacionAvanzada.Models
 
             public virtual Product product { get; set; }
         }
-    }
+}
 
