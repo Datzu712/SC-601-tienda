@@ -11,9 +11,9 @@ namespace ProyectoProgramacionAvanzada.Models
         public DbSet<Product_Reviews> product_reviews { get; set; }
         public DbSet<User> user { get; set; }
         public DbSet<Role> role { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<CartItem> CartItems { get; set; }
+        // public DbSet<Order> Orders { get; set; }
+        // public DbSet<OrderDetail> OrderDetails { get; set; }
+        // public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
