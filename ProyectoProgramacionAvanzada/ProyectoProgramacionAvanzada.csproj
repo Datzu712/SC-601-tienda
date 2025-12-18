@@ -365,7 +365,11 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\main.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\modules\app.js" />
+    <Content Include="Scripts\modules\constants.js" />
+    <Content Include="Scripts\modules\theme.js" />
     <Content Include="Scripts\modules\modals.js" />
+    <Content Include="Scripts\modules\sidebar.js" />
     <Content Include="Scripts\modules\toast.js" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />

@@ -1,29 +1,20 @@
-﻿import { ToastManager } from './modules/toast.js';
-import { DataFetcher } from './modules/api.js';
+﻿import { MODULE_TOKENS } from "./modules/constants.js";
+import { Sidebar } from "./modules/sidebar.js";
+import { ThemeManager } from "./modules/theme.js";
+import { ToastManager } from './modules/toast.js';
 import { ModalManager } from './modules/modals.js';
+import { App } from "./modules/app.js";
 
-document.getElementById('sidebarToggle').addEventListener('click', function() {
-    document.querySelector('.sidebar').classList.toggle('show');
-});
+const app = new App()
+    .registerModule(MODULE_TOKENS.THEME, ThemeManager)
+    .registerModule(MODULE_TOKENS.NOTIFICATIONS, new ToastManager('toast-container'))
+    .registerModule(MODULE_TOKENS.SIDEBAR, new Sidebar('sidebar', 'sidebarToggle'))
+    .registerModule(MODULE_TOKENS.MODALS, new ModalManager('confirmModal'));
+
+await app.init();
 
 window.App = {
-    toast: ToastManager.getInstance(document.getElementById('toast-container')),
-    modal: ModalManager.getInstance('confirmModal'),
-    // _testFetcher: new DataFetcher({ userId: 1, someCrazyFilters: {} }, {
-    //     queryFn: async (state) => {
-    //         console.log('state', state);
-    //         await new Promise((r) => setTimeout(r, 1000));
-    //         throw new Error('Simulated fetch error');
-    //        
-    //         return {
-    //             data: `Fetched data for state: ${JSON.stringify(state)}`
-    //         };
-    //     },
-    //     onSuccess: (res) => {
-    //         console.log('Fetch successful:', res);
-    //     },
-    //     onError: (err) => {
-    //         console.error('Fetch error:', err);
-    //     },
-    // })
-}
+    get toast() { return app.get(MODULE_TOKENS.NOTIFICATIONS); },
+    get modal() { return app.get(MODULE_TOKENS.MODALS); },
+    get theme() { return app.get(MODULE_TOKENS.THEME); },
+};
