@@ -117,7 +117,8 @@ function updateCharts(data) {
 const { data } = new DataFetcher(initialState, {
     endpoint: '/Order/GetOrderStats',
     onSuccess: (data) => {
-        updateCharts(data)
+        updateCharts(data);
+        window.App.notifications.showToast(`Mostrando estadisticas basadas en: ${data.period}.`, { type: 'success' });
     },
     onError: (error) => {
         console.error(error);
