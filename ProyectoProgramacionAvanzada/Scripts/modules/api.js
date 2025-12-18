@@ -104,30 +104,29 @@ export class DataFetcher {
             
             return res;
         } catch (e) {
-            if (this.#options.retry && retryCount <= this.#options.retry) {
+            if (this.#options.retry && retryCount < this.#options.retry) {
                 console.debug('Retrieving data from state', retryCount);
                 
                 await new Promise((r) => setTimeout(r, this.#options.retryDelay));
+
+                if (this.#options.onError) {
+                    this.#options.onError(e);
+                }
                 
                 return await this.fetchData(currentState, ++retryCount);
             } else {
                 console.error('DataFetcher: Max retries reached or retries disabled.', e);
-            }
-            
-            
-            if (this.#options.onError) {
-                this.#options.onError(e);
             }
             throw e;
         }
     }
 
     #setUpEvents() {
-        console.log(this.#options)
         if (!this.#options.enabled) return;
         
         if (this.#options.fetchOnWindowFocus) {
             window.addEventListener('focus', () => {
+                console.log('Window focused, fetching data...');
                 this.fetchData(this.#previousOriginalState).catch(() => undefined);
             });
         }

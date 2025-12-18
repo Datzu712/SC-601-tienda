@@ -305,6 +305,7 @@
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\ReviewController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Filters\AdminOnlyAttribute.cs" />
     <Compile Include="Filters\LogErrorAttribute.cs" />
@@ -405,6 +406,8 @@
     <Content Include="Views\Product\Index.cshtml" />
     <Content Include="Views\Review\Resena.cshtml" />
     <Content Include="Views\Shared\_AuthLayout.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Test\README.md" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
