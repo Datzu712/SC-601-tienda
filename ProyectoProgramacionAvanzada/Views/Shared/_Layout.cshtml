@@ -1,4 +1,20 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNet.Identity
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    
+    var isDashboardActive = controller == "Home" && action == "Index";
+    var isProductActive = (controller == "Product" && action == "Index") ||
+                          controller == "Carrito" || (controller == "Product" && action == "Details");
+    var isUsersActive = controller == "Users";
+    var isProductAdminActive = (controller == "Product" && action == "AdminList") || 
+                               (controller == "Product" && action == "Create") ||
+                               (controller == "Product" && action == "Edit");;
+    var isReviewActive = controller == "Review";
+    var isHistoryActive = controller == "Order";
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -22,6 +38,12 @@
         .main-content {
             margin-left: 280px;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main-content > .container-fluid {
+            flex: 1;
         }
      
         @@media (max-width: 768px) {
@@ -35,6 +57,12 @@
             .main-content {
                 margin-left: 0;
             }
+            
+            header .container-fluid > div {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -45,29 +73,50 @@
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="@Url.Action("Index", "Dashboard")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" && ViewContext.RouteData.Values["controller"].ToString() == "Dashboard" ? "active" : "text-white")">
+                <a href="@Url.Action("Index", "Home")" class="nav-link @(isDashboardActive ? "active" : "text-white")">
                     <i class="fas fa-tachometer-alt pe-2"></i>
                     Dashboard
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link text-white">
-                    <i class="fas fa-users pe-2"></i>
-                    Usuarios
-                </a>
-            </li>
-            <li>
-                <a href="@Url.Action("Index", "Product")" class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" && ViewContext.RouteData.Values["controller"].ToString() == "Product" ? "active" : "text-white")">
+                <a href="@Url.Action("Index", "Product")" class="nav-link @(isProductActive ? "active" : "text-white")">
                     <i class="fas fa-th pe-2"></i>
-                    Productos
+                    Catalogo
                 </a>
             </li>
             <li>
-                @Html.ActionLink("Acerca de", "About", "Dashboard", new { area = "" }, new { @class = "nav-link " + (ViewContext.RouteData.Values["action"].ToString() == "About" ? "active" : "text-white") })
+                <a href="@Url.Action("Index", "Order")" class="nav-link @(isHistoryActive ? "active" : "text-white")">
+                    <i class="fas fa-th pe-2"></i>
+                    Historial de compras
+                </a>
             </li>
-            <li>
-                @Html.ActionLink("Contacto", "Contact", "Dashboard", new { area = "" }, new { @class = "nav-link " + (ViewContext.RouteData.Values["action"].ToString() == "Contact" ? "active" : "text-white") })
-            </li>
+            @if (User.IsInRole("Administrador"))
+            {
+                <li>
+                    <a href="@Url.Action("AdminList", "Product")" class="nav-link @(isProductAdminActive ? "active" : "text-white")">
+                        <i class="fas fa-cog pe-2"></i>
+                        Admin Productos
+                    </a>
+                </li>
+            }
+            @if (User.IsInRole("Administrador"))
+            {
+                <li>
+                    <a href="@Url.Action("Index", "Review")" class="nav-link @(isReviewActive ? "active" : "text-white")">
+                        <i class="fas fa-comments pe-2"></i>
+                        Reseñas
+                    </a>
+                </li>
+            }
+            @if (User.IsInRole("Administrador"))
+            {
+                <li>
+                    <a href="@Url.Action("Index", "Users")" class="nav-link @(isUsersActive ? "active" : "text-white")">
+                        <i class="fas fa-users me-1"></i>
+                        Usuarios
+                    </a>
+                </li>
+            }
         </ul>
         <hr>
         
@@ -75,37 +124,64 @@
         <div class="dropdown">
             <button class="btn d-flex align-items-center text-white text-decoration-none dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-user-circle rounded-circle me-2" style="font-size: 32px;"></i>
-                <strong>Usuario</strong>
+                <strong>@User.Identity.GetUserName()</strong>
             </button>
         
             <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                <li><a class="dropdown-item" href="#">Perfil</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Cerrar sesión</a></li>
+                @if (!Request.IsAuthenticated)
+                {
+                    <li>
+                        <a class="dropdown-item" href="@Url.Action("Login", "Account")">
+                            <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    @* <li><a class="dropdown-item" href="#">Perfil</a></li> *@
+                    @* <li><hr class="dropdown-divider"></li> *@
+                    <li>
+                        @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { @class = "m-0 p-0" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión
+                            </button>
+                        }
+                    </li>
+                }
             </ul>
         </div>
     </div>
 
     <!-- Main content -->
     <div class="main-content">
-        <!-- Header -->
-        <header class="d-flex justify-content-between align-items-center p-3 bg-light border-bottom">
-            <div class="d-flex align-items-center">
-                <button class="btn btn-outline-secondary d-md-none me-2" type="button" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h4 class="mb-0">@ViewBag.Title</h4>
+        <header class="bg-white border-bottom">
+            <div class="container-fluid px-4 py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-outline-secondary d-md-none me-2" type="button" id="sidebarToggle">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h4 class="mb-0">@ViewBag.Title</h4>
+                    </div>
+                    
+                    @if (IsSectionDefined("Breadcrumbs"))
+                    {
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb mb-0">
+                                @RenderSection("Breadcrumbs", required: false)
+                            </ol>
+                        </nav>
+                    }
+                </div>
             </div>
         </header>
-
+        
         <!-- Page content -->
-        <div class="container-fluid p-4">
+        <div class="container-fluid p-4 bg-light">
             @RenderBody()
         </div>
-        
-        <footer class="bg-light text-center bottom-0 position-fixed w-100 py-3">
-            <p class="mb-0">&copy; @DateTime.Now.Year - Proyecto Tienda</p>
-        </footer>
     </div>
 
     <div id="toast-container" aria-live="polite" aria-atomic="true" class="position-fixed bottom-0 end-0 p-3 ">

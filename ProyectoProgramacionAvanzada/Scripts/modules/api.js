@@ -65,7 +65,7 @@ export class DataFetcher {
         this.data = new Proxy(state, {
             set: (target, prop, value, receiver) => {
                 // avoid unnecessary updates
-                if (value && JSON.stringify(value) === JSON.stringify(receiver)) {
+                if (value && JSON.stringify(value) === JSON.stringify(this.#previousOriginalState)) {
                     console.debug('DataFetcher: No changes detected in state, skipping fetch.');
                     return true;
                 }
@@ -96,6 +96,9 @@ export class DataFetcher {
         } catch (e) {
             if (this.#options.retry && retryCount <= this.#options.retry) {
                 console.debug('Retrieving data from state', retryCount);
+                
+                await new Promise((r) => setTimeout(r, this.#options.retryDelay));
+                
                 return await this.fetchData(currentState, ++retryCount);
             } else {
                 console.error('DataFetcher: Max retries reached or retries disabled.', e);
@@ -125,4 +128,6 @@ export class DataFetcher {
             });
         }
     }
+    
+    // todo: add method detroy to remove event listeners
 }

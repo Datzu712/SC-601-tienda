@@ -1,0 +1,148 @@
+﻿@model ProyectoProgramacionAvanzada.Models.Producto
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Detalle del Producto";
+}
+
+@section Breadcrumbs {
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index", "Product")">
+            <i class="fas fa-home me-1"></i>Catálogo
+        </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <i class="fas fa-store me-1"></i>Detalle del Producto <strong>@Model.Nombre</strong>
+    </li>
+}
+
+<h2 class="mb-4">@Model.Nombre</h2>
+
+<div class="row">
+
+    <div class="col-md-6">
+
+        @if (Model.Imagenes != null && Model.Imagenes.Any())
+        {
+            var principal = Model.Imagenes.First();
+            var base64Principal = Convert.ToBase64String(principal.DatosImagen);
+            var srcPrincipal = $"data:{principal.ContentType};base64,{base64Principal}";
+
+            <img id="imgPrincipal" src="@srcPrincipal"
+                 class="img-fluid rounded shadow mb-3"
+                 style="max-height:350px; object-fit:cover;" />
+
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var img in Model.Imagenes)
+                {
+                    var b64 = Convert.ToBase64String(img.DatosImagen);
+                    var src = $"data:{img.ContentType};base64,{b64}";
+
+                    <img src="@src" class="img-thumbnail miniatura"
+                         style="width:90px; height:90px; object-fit:cover; cursor:pointer;" />
+                }
+            </div>
+        }
+        else
+        {
+            <p>No hay imágenes disponibles.</p>
+        }
+
+    </div>
+
+    <div class="col-md-6">
+
+        <h4 class="text-success">Precio: ₡@Model.Precio</h4>
+        <p><strong>Inventario:</strong> @Model.Inventario</p>
+
+        @if (Model.Inventario > 0)
+        {
+            <a onclick="return confirmAdd(event)" href="@Url.Action("Agregar", "Carrito", new { id = Model.Id })"
+               class="btn btn-success btn-lg mb-3">
+                🛒 Agregar al carrito
+            </a>
+        }
+        else
+        {
+            <span class="badge bg-danger fs-5 mb-3">Agotado</span>
+        }
+
+        <hr />
+
+        <h4 class="mt-4">Reseñas</h4>
+
+        @if (Model.Resenas != null && Model.Resenas.Any(r => r.Estado == "Aprobada"))
+        {
+            foreach (var r in Model.Resenas.Where(r => r.Estado == "Aprobada"))
+            {
+                <div class="border rounded p-3 mb-3">
+                    <strong class="text-warning">@r.Calificacion ★</strong>
+                    <p class="mb-1">@r.Comentario</p>
+                    <small class="text-muted">@r.FechaCreacion.ToShortDateString()</small>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No hay reseñas aún.</p>
+        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <hr />
+            <h4>Agregar Reseña</h4>
+
+            <form method="post" action="@Url.Action("Crear", "Review")" id="formResena">
+
+                <input type="hidden" name="productoId" value="@Model.Id" />
+
+                <div class="mb-2">
+                    <label class="form-label">Calificación</label>
+                    <select name="calificacion" class="form-control" required>
+                        <option value="">Seleccione</option>
+                        <option value="1">1 ★</option>
+                        <option value="2">2 ★</option>
+                        <option value="3">3 ★</option>
+                        <option value="4">4 ★</option>
+                        <option value="5">5 ★</option>
+                    </select>
+                </div>
+
+                <div class="mb-2">
+                    <label class="form-label">Comentario</label>
+                    <textarea name="comentario" class="form-control" rows="3" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-2">Enviar Reseña</button>
+            </form>
+        }
+        else
+        {
+            <p class="text-muted">Debe iniciar sesión para dejar una reseña.</p>
+        }
+
+    </div>
+</div>
+
+<script>
+    $(".miniatura").click(function () {
+        let nueva = $(this).attr("src");
+        $("#imgPrincipal").attr("src", nueva);
+    });
+
+    function confirmAdd(event) {
+        event.preventDefault();
+
+        const targetUrl = event.currentTarget.href;
+
+        App.modal.showSuccessConfirmation({
+            title: 'Agregar producto',
+            message: '¿Deseas agregar este producto al carrito?',
+            buttonText: 'Sí, agregar',
+            cancelText: 'Cancelar',
+            onConfirm: function() {
+                window.location.href = targetUrl;
+            }
+        });
+    }
+</script>

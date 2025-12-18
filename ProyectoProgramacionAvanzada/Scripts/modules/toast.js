@@ -118,7 +118,7 @@ export class ToastManager {
 
     /**
      * Hide all currently displayed toasts inside the root toast container
-     * @returns {void} - Returns this for method chaining
+     * @returns {void}
      */
     hideToast() {
         this.#validateElement();
@@ -164,7 +164,7 @@ export class ToastManager {
         toastDiv.id = toastId;
         toastDiv.className = 'toast mt-2';
         toastDiv.setAttribute('role', 'alert');
-        toastDiv.setAttribute('aria-live', 'assertive');
+        toastDiv.setAttribute('aria-live', 'polite');
         toastDiv.setAttribute('aria-atomic', 'true');
 
         if (options.onHide && typeof options.onHide === 'function') {
@@ -184,7 +184,6 @@ export class ToastManager {
             </div>
         `;
         
-        // avoiding XSS
         if (options.title) {
             const strong = document.createElement('strong');
             strong.className = 'me-auto';

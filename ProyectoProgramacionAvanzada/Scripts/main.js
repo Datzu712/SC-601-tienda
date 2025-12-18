@@ -1,6 +1,10 @@
-﻿﻿import { ToastManager } from './modules/toast.js';
+﻿import { ToastManager } from './modules/toast.js';
 import { DataFetcher } from './modules/api.js';
 import { ModalManager } from './modules/modals.js';
+
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+    document.querySelector('.sidebar').classList.toggle('show');
+});
 
 window.App = {
     toast: ToastManager.getInstance(document.getElementById('toast-container')),

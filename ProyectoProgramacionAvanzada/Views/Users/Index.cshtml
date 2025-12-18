@@ -1,0 +1,75 @@
+﻿@model List<ProyectoProgramacionAvanzada.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Gestión de Usuarios";
+}
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th>Email</th>
+        <th>Código</th>
+        <th>Activo</th>
+        <th>Última conexión</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    @foreach (var u in Model)
+    {
+        <tr>
+            <td>@u.Email</td>
+            <td>@u.CodigoUsuario</td>
+            <td>@(u.EstaActivo ? "Sí" : "No")</td>
+            <td>@u.UltimaConexion</td>
+            <td>
+                @if (u.EstaActivo)
+                {
+                    <a onclick="return confirmDeactivate(event);" href="@Url.Action("Desactivar", new { id = u.Id })" class="btn btn-danger btn-sm">Desactivar</a>
+                }
+                else
+                {
+                    <a onclick="return confirmActivate(event);" href="@Url.Action("Activar", new { id = u.Id })" class="btn btn-success btn-sm">Activar</a>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        function confirmDeactivate(event) {
+            event.preventDefault();
+
+            const targetUrl = event.currentTarget.href;
+
+            App.modal.showWarningConfirmation({
+                title: 'Desactivar usuario',
+                message: '¿Estás seguro de que deseas desactivar este usuario?',
+                confirmText: 'Sí, confirmar',
+                cancelText: 'Cancelar',
+                onConfirm: function() {
+                    window.location.href = targetUrl;
+                }
+            });
+        }
+
+        function confirmActivate(event) {
+            event.preventDefault();
+
+            const targetUrl = event.currentTarget.href;
+
+            App.modal.showWarningConfirmation({
+                title: 'Activar usuario',
+                message: '¿Estás seguro de que deseas activar este usuario?',
+                confirmText: 'Sí, eliminar',
+                cancelText: 'Cancelar',
+                onConfirm: function() {
+                    window.location.href = targetUrl;
+                }
+            });
+        }
+    </script>
+}
