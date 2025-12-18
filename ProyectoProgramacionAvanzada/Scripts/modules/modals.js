@@ -1,9 +1,19 @@
 ﻿export class ModalManager {
+    modalId = null;
+
+    /**
+     * 
+     * @param { string | undefined } modalId
+     */
     constructor(modalId) {
-        this.modalId = modalId;
-        this.ensureModalExists();
+        if (modalId) {
+            this.modalId = modalId;
+        }
     }
     
+    init() {
+        this.ensureModalExists();
+    }
     ensureModalExists() {
         if (!document.getElementById(this.modalId)) {
             throw new Error('Modal not found');
@@ -135,6 +145,10 @@
             ModalManager.instance = new ModalManager(modalDivId);
         }
         return ModalManager.instance;
+    }
+
+    destroy() {
+        // todo: ver como hacer un cleanup cuando hay modals activos (posible refactor)    
     }
 }
 

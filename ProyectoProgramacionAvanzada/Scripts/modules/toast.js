@@ -59,23 +59,40 @@ export class ToastManager {
      */
     #defaultOptions;
     
+    isInitialized = false;
+    
     /**
      * Private constructor - Use ToastManager.getInstance() instead
-     * @param {HTMLElement | undefined} rootToastContainer - The toast HTML element
+     * @param {HTMLElement | string | undefined} rootToastContainer - The toast HTML element
      * @param {ToastManagerConfig | undefined} defaultOptions - Default configuration options
      * @returns {ToastManager}
      */
     constructor(rootToastContainer, defaultOptions = TOAST_CONFIG) {
         if (ToastManager.#instance) throw new Error('Toast already instantiated. Use ToastManager.getInstance() to access the singleton instance.');
         
-        if (!rootToastContainer || !(rootToastContainer instanceof HTMLDivElement)) {
+        if (!rootToastContainer) {
             throw new Error('Root toast container element is required to initialize Toast.');
+        }
+        let rootElement = rootToastContainer;
+        
+        if (typeof rootToastContainer === 'string') {
+            rootElement = document.getElementById(rootToastContainer);
+        }
+        
+        if (!(rootElement instanceof HTMLDivElement)) {
+            throw new Error('Invalid root toast container element provided.');
         }
         
         this.#defaultOptions = defaultOptions;
-        this.#rootToastContainer = rootToastContainer;
+        this.#rootToastContainer = rootElement;
         
         ToastManager.#instance = this;
+    }
+    
+    init() {
+        this.#validateElement();
+        
+        this.isInitialized = true;
     }
 
     /**
@@ -120,7 +137,7 @@ export class ToastManager {
      * Hide all currently displayed toasts inside the root toast container
      * @returns {void}
      */
-    hideToast() {
+    hideToasts() {
         this.#validateElement();
         
         const toasts = this.#rootToastContainer.querySelectorAll('.toast.show');
@@ -133,6 +150,10 @@ export class ToastManager {
 
     }
 
+    /**
+     * Validate that the root toast container element exists in the DOM
+     * @private
+     */
     #validateElement() {
         if (!this.#rootToastContainer || !document.body.contains(this.#rootToastContainer)) {
             throw new Error('Toast element not found in DOM');
@@ -179,9 +200,7 @@ export class ToastManager {
             <div class="toast-header">
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-            <div class="toast-body">
-                
-            </div>
+            <div class="toast-body"></div>
         `;
         
         if (options.title) {
@@ -196,5 +215,14 @@ export class ToastManager {
         toastDiv.querySelector('.toast-body').textContent = message;
         
         return toastDiv;
+    }
+
+    /**
+     * Cleanup and destroy the ToastManager instance
+     */
+    destroy() {
+        ToastManager.#instance = null;
+        this.hideToasts();
+        this.#rootToastContainer = null;
     }
 }
