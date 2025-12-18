@@ -40,6 +40,10 @@ export class ThemeManager {
         const newTheme = this.toggleTheme();
         this.updateIcon();
         this.dispatchThemeChange(newTheme);
+        new Promise((resolve) => setTimeout(() => {
+            App.notifications.showToast(`Switched to ${newTheme} theme`, { delay: 1000 });
+            resolve();
+        }, 100));
     }
 
     handleSystemThemeChange(event) {

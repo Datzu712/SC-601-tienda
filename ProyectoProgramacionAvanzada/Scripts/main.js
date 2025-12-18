@@ -14,7 +14,7 @@ const app = new App()
 await app.init();
 
 window.App = {
-    get toast() { return app.get(MODULE_TOKENS.NOTIFICATIONS); },
+    get notifications() { return app.get(MODULE_TOKENS.NOTIFICATIONS); },
     get modal() { return app.get(MODULE_TOKENS.MODALS); },
     get theme() { return app.get(MODULE_TOKENS.THEME); },
 };
