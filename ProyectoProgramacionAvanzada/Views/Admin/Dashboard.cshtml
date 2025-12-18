@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "Dashboard del Administrador";
+}
+
+<h2 class="mb-4">Dashboard del Administrador</h2>
+
+<div class="row">
+    <div class="col-md-3 mb-3">
+        <div class="card shadow p-3 text-center bg-primary text-white">
+            <h4>Usuarios</h4>
+            <h2 id="statUsuarios">...</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow p-3 text-center bg-success text-white">
+            <h4>Productos</h4>
+            <h2 id="statProductos">...</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow p-3 text-center bg-warning text-dark">
+            <h4>Bajo Inventario</h4>
+            <h2 id="statBajoInventario">...</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card shadow p-3 text-center bg-danger text-white">
+            <h4>Órdenes</h4>
+            <h2 id="statOrdenes">...</h2>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<h3 class="mt-4">Gráfico de Ventas (Últimos 7 días)</h3>
+<canvas id="graficoVentas" width="400" height="150"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // ======================================================
+    // 1) Cargar estadísticas vía AJAX
+    // ======================================================
+    $(document).ready(function () {
+        $.get("/api/dashboard/estadisticas", function (data) {
+
+            $("#statUsuarios").text(data.TotalUsuarios);
+            $("#statProductos").text(data.TotalProductos);
+            $("#statBajoInventario").text(data.BajoInventario);
+            $("#statOrdenes").text(data.TotalOrdenes);
+        });
+
+        // ==================================================
+        // 2) Cargar ventas vía AJAX y dibujar gráfico
+        // ==================================================
+        $.get("/api/dashboard/ventas", function (data) {
+
+            var labels = [];
+            var valores = [];
+
+            data.forEach(function (item) {
+                var fecha = new Date(item.Fecha);
+                labels.push(fecha.toLocaleDateString());
+                valores.push(item.Total);
+            });
+
+            var ctx = document.getElementById("graficoVentas").getContext("2d");
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Ventas por día (₡)",
+                        data: valores,
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        backgroundColor: "rgba(75, 192, 192, 0.2)",
+                        borderWidth: 2
+                    }]
+                }
+            });
+
+        });
+    });
+</script>

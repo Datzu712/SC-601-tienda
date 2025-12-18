@@ -1,11 +1,152 @@
-﻿@{
-    ViewBag.Title = "Products";
+﻿@model IEnumerable<ProyectoProgramacionAvanzada.Models.Producto>
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Catálog de Productos";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
-</main>
+@section Breadcrumbs {
+    <div class="d-flex gap-2">
+        @{
+            var carrito = Session["carrito"] as List<ProyectoProgramacionAvanzada.Models.CarritoItemViewModel>;
+            var itemCount = carrito?.Sum(x => x.Cantidad) ?? 0;
+        }
+        <a href="@Url.Action("Index", "Carrito")" class="btn btn-primary position-relative d-flex align-items-center">
+            <i class="fas fa-shopping-cart me-2"></i>
+            <span class="d-none d-sm-inline">Ver Carrito</span>
+            <span class="d-inline d-sm-none">Carrito</span>
+            @if (itemCount > 0)
+            {
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    @itemCount
+                    <span class="visually-hidden">productos en el carrito</span>
+                </span>
+            }
+        </a>
+    </div>
+}
+
+<style>
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .product-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .product-card:hover .product-overlay {
+        opacity: 1;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        min-height: 2.5rem;
+    }
+</style>
+
+
+<div class="container-fluid">
+    <div class="row g-4">
+            @foreach (var p in Model)
+        {
+            var primeraImagen = p.Imagenes?.FirstOrDefault();
+            string imgSrc = "~/Content/no-image.png";
+
+            if (primeraImagen != null)
+            {
+                var base64 = Convert.ToBase64String(primeraImagen.DatosImagen);
+                imgSrc = $"data:{primeraImagen.ContentType};base64,{base64}";
+            }
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 shadow-sm border-0 product-card">
+                    <div class="position-relative overflow-hidden">
+                        @if (primeraImagen != null)
+                        {
+                            <img class="card-img-top product-img" src="@imgSrc"
+                                 alt="@p.Nombre" style="height: 220px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex align-items-center justify-content-center" style="height: 220px;">
+                                <i class="fas fa-image fa-4x text-muted"></i>
+                            </div>
+                        }
+                        <div class="product-overlay">
+                            <a href="@Url.Action("Details", "Product", new { id = p.Id })"
+                               class="btn btn-light btn-sm rounded-pill">
+                                <i class="fas fa-eye me-1"></i> Ver detalles
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title mb-2 fw-bold">
+                            @p.Nombre
+                        </h5>
+                        
+                        <div class="mt-auto">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <span class="fs-4 fw-bold text-success">
+                                    <i class="fas fa-tag me-1"></i>₡@p.Precio.ToString("N0")
+                                </span>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <a href="@Url.Action("Details", "Product", new { id = p.Id })"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-info-circle me-1"></i> Ver más
+                                </a>
+
+                                <a onclick="return confirmAdd(event);" 
+                                   href="@Url.Action("Agregar", "Carrito", new { id = p.Id })"
+                                   class="btn btn-success btn-sm">
+                                    <i class="fas fa-shopping-cart me-1"></i> Agregar al carrito
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmAdd(event) {
+            event.preventDefault();
+            
+            const targetUrl = event.currentTarget.href;
+            
+            App.modal.showSuccessConfirmation({
+                title: 'Agregar producto',
+                message: '¿Deseas agregar este producto al carrito?',
+                buttonText: 'Sí, agregar',
+                cancelText: 'Cancelar',
+                onConfirm: function() {
+                    window.location.href = targetUrl;
+                }
+            });
+        }
+    </script>
+}

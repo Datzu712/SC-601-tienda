@@ -1,0 +1,52 @@
+﻿@model ProyectoProgramacionAvanzada.Models.Orden
+
+@{
+    ViewBag.Title = "Compra Confirmada";
+}
+
+<h2 class="text-success mb-4">¡Compra realizada con éxito!</h2>
+
+<div class="card p-4">
+
+    <h4>Detalles de la Orden</h4>
+
+    <p><strong>Número de orden:</strong> @Model.Id</p>
+    <p><strong>Fecha:</strong> @Model.FechaOrden.ToString("dd/MM/yyyy hh:mm tt")</p>
+    <p><strong>Total:</strong> ₡@Model.Total</p>
+
+    <hr />
+
+    <h4>Productos Comprados</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var d in Model.Detalles)
+            {
+                <tr>
+                    <td>@d.Producto.Nombre</td>
+                    <td>@d.Cantidad</td>
+                    <td>₡@d.PrecioUnitario</td>
+                    <td>₡@(d.Cantidad * d.PrecioUnitario)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+<a href="@Url.Action("Index", "Product")" class="btn btn-primary mt-3">
+    Seguir comprando
+</a>
+
+<a href="@Url.Action("Index", "Order")" class="btn btn-secondary mt-3">
+    Ver historial de órdenes
+</a>

@@ -1,102 +1,121 @@
-﻿public class CarritoController : Controller
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Web.Mvc;
+using ProyectoProgramacionAvanzada.Models;
+using Microsoft.AspNet.Identity;
+
+namespace ProyectoProgramacionAvanzada.Controllers
 {
-    private readonly ApplicationDbContext _db = new ApplicationDbContext();
-
-    public ActionResult Index()
+    public class CarritoController : Controller
     {
-        int userId = 1; // luego se cambia por Identity
-        var items = _db.CartItems
-                       .Include("Product")
-                       .Where(x => x.UserId == userId)
-                       .ToList();
+        private ApplicationDbContext db = new ApplicationDbContext();
 
-        return View(items);
-    }
-
-    [HttpPost]
-    public ActionResult Agregar(int productId, int quantity)
-    {
-        int userId = 1;
-
-        var item = _db.CartItems
-                      .FirstOrDefault(x => x.ProductId == productId && x.UserId == userId);
-
-        if (item == null)
+        public ActionResult Index()
         {
-            item = new CartItem
+            var carrito = Session["carrito"] as List<CarritoItemViewModel> ?? new List<CarritoItemViewModel>();
+            return View(carrito);
+        }
+
+        public ActionResult Agregar(int id)
+        {
+            var carrito = Session["carrito"] as List<CarritoItemViewModel> ?? new List<CarritoItemViewModel>();
+            var producto = db.Productos.Find(id);
+
+            if (producto == null)
             {
-                ProductId = productId,
-                Quantity = quantity,
-                UserId = userId
-            };
-            _db.CartItems.Add(item);
-        }
-        else
-        {
-            item.Quantity += quantity;
-        }
-
-        _db.SaveChanges();
-        return RedirectToAction("Index");
-    }
-
-    public ActionResult Eliminar(int id)
-    {
-        var item = _db.CartItems.Find(id);
-        if (item != null)
-        {
-            _db.CartItems.Remove(item);
-            _db.SaveChanges();
-        }
-        return RedirectToAction("Index");
-    }
-
-    public ActionResult Checkout()
-    {
-        int userId = 1;
-        var cart = _db.CartItems.Include("Product").Where(x => x.UserId == userId).ToList();
-
-        if (!cart.Any())
-            return RedirectToAction("Index");
-
-        // Validar inventario
-        foreach (var item in cart)
-        {
-            if (item.Quantity > item.Product.Stock)
-            {
-                TempData["error"] = $"No hay inventario suficiente para {item.Product.Name}";
-                return RedirectToAction("Index");
+                TempData["Error"] = "Producto no encontrado.";
+                return RedirectToAction("Index", "Productos");
             }
-        }
-
-        // Crear orden
-        var order = new Order
-        {
-            UserId = userId,
-            CreatedAt = DateTime.Now,
-            Total = cart.Sum(x => x.Quantity * x.Product.Price),
-            Details = cart.Select(x => new OrderDetail
+            
+            var productoEnCarrito = carrito.FirstOrDefault(c => c.ProductoId == id);
+            if (productoEnCarrito != null)
             {
-                ProductId = x.ProductId,
-                Quantity = x.Quantity,
-                UnitPrice = x.Product.Price
-            }).ToList()
-        };
+                productoEnCarrito.Cantidad++;
+                productoEnCarrito.SubTotal = productoEnCarrito.Cantidad * productoEnCarrito.Precio;
+            }
+            else
+            {
+                carrito.Add(new CarritoItemViewModel
+                {
+                    ProductoId = producto.Id,
+                    NombreProducto = producto.Nombre,
+                    Precio = producto.Precio,
+                    Cantidad = 1,
+                    SubTotal = producto.Precio
+                });
+            }
 
-        _db.Orders.Add(order);
-
-        // Actualizar inventario
-        foreach (var item in cart)
-        {
-            item.Product.Stock -= item.Quantity;
+            Session["carrito"] = carrito;
+            return RedirectToAction("Index");
         }
 
-        // Vaciar carrito
-        _db.CartItems.RemoveRange(cart);
+        public ActionResult Remover(int id)
+        {
+            var carrito = Session["carrito"] as List<CarritoItemViewModel>;
+            var item = carrito.FirstOrDefault(c => c.ProductoId == id);
+            
+            if (item.Cantidad > 1)
+            {
+                item.Cantidad--;
+                item.SubTotal = item.Cantidad * item.Precio;
+            }
+            else
+            {
+                carrito.Remove(item);
+            }
+            
+            Session["carrito"] = carrito;
 
-        _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
-        TempData["ok"] = "Compra completada";
-        return RedirectToAction("Index");
+        public ActionResult ConfirmarCompra()
+        {
+            var carrito = Session["carrito"] as List<CarritoItemViewModel>;
+
+            // Validar stock
+            foreach (var item in carrito)
+            {
+                var p = db.Productos.Find(item.ProductoId);
+                if (p.Inventario < item.Cantidad)
+                {
+                    TempData["Error"] = $"No hay suficiente inventario de {p.Nombre}.";
+                    return RedirectToAction("Index");
+                }
+            }
+
+            // Crear Orden
+            var orden = new Orden
+            {
+                UsuarioId = User.Identity.GetUserId(),
+                FechaOrden = System.DateTime.Now,
+                Total = carrito.Sum(x => x.SubTotal),
+                Estado = "Procesada"
+            };
+
+            db.Ordenes.Add(orden);
+            db.SaveChanges();
+
+            // Guardar detalles
+            foreach (var item in carrito)
+            {
+                db.DetallesOrden.Add(new DetalleOrden
+                {
+                    OrdenId = orden.Id,
+                    ProductoId = item.ProductoId,
+                    Cantidad = item.Cantidad,
+                    PrecioUnitario = item.Precio
+                });
+
+                // Restar inventario
+                var p = db.Productos.Find(item.ProductoId);
+                p.Inventario -= item.Cantidad;
+            }
+
+            db.SaveChanges();
+
+            Session["carrito"] = null;
+            return View("Confirmacion", orden);
+        }
     }
 }

@@ -1,0 +1,67 @@
+﻿@model ProyectoProgramacionAvanzada.Models.Producto
+
+@{
+    ViewBag.Title = "Crear Producto";
+}
+
+<h2 class="mb-4">Crear Producto</h2>
+
+@using (Html.BeginForm("Create", "Product", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="card p-4 shadow">
+
+        <div class="mb-3">
+            @Html.LabelFor(m => m.CodigoProducto)
+            @Html.TextBoxFor(m => m.CodigoProducto, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.CodigoProducto, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(m => m.Nombre)
+            @Html.TextBoxFor(m => m.Nombre, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Nombre, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(m => m.Precio)
+            @Html.TextBoxFor(m => m.Precio, new { @class = "form-control", type = "number", step = "0.01" })
+            @Html.ValidationMessageFor(m => m.Precio, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(m => m.Inventario)
+            @Html.TextBoxFor(m => m.Inventario, new { @class = "form-control", type = "number" })
+            @Html.ValidationMessageFor(m => m.Inventario, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            <label>Imágenes del producto (mínimo 3)</label>
+            <input type="file" name="imagenes" multiple class="form-control" accept="image/*" />
+            <span class="text-danger">@ViewBag.Error</span>
+        </div>
+
+        <div class="mb-3 form-check">
+            @Html.CheckBoxFor(m => m.Activo, new { @class = "form-check-input" })
+            @Html.LabelFor(m => m.Activo, new { @class = "form-check-label" })
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar Producto</button>
+        <a href="@Url.Action("AdminList", "Product")" class="btn btn-secondary">Cancelar</a>
+
+    </div>
+}
+
+<!-- jQuery validación especial -->
+<script>
+    $("form").submit(function () {
+        var files = $("input[name='imagenes']")[0].files;
+
+        if (files.length < 3) {
+            alert("Debe subir al menos 3 imágenes para continuar.");
+            return false;
+        }
+        return true;
+    });
+</script>

@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Inicio";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="text-center mt-5">
+
+    <h1 class="display-4 fw-bold">Bienvenido a Bazar Librería</h1>
+    <p class="lead mt-3">
+        Explora nuestro catálogo, inicia sesión y disfruta de las funcionalidades del sistema.
+    </p>
+
+    <a href="@Url.Action("Index", "Product")" class="btn btn-primary btn-lg mt-3">
+        Ver Catálogo
+    </a>
+
+</div>

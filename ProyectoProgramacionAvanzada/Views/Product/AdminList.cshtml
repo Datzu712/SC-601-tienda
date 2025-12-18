@@ -1,0 +1,227 @@
+﻿@model IEnumerable<ProyectoProgramacionAvanzada.Models.Producto>
+
+@{
+    ViewBag.Title = "Administrar Productos";
+}
+
+<div class="container-fluid">
+    <!-- cards de estadisticas -->
+    <div class="row mb-4 g-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">Total Productos</p>
+                            <h5 class="mb-0 fw-bold">@Model.Count()</h5>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 rounded-3 p-2">
+                            <i class="fas fa-box text-primary" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">Activos</p>
+                            <h5 class="mb-0 fw-bold text-success">@Model.Count(p => p.Activo)</h5>
+                        </div>
+                        <div class="bg-success bg-opacity-10 rounded-3 p-2">
+                            <i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">Inactivos</p>
+                            <h5 class="mb-0 fw-bold text-danger">@Model.Count(p => !p.Activo)</h5>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 rounded-3 p-2">
+                            <i class="fas fa-times-circle text-danger" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <p class="text-muted mb-1 small">Stock Bajo (> 10)</p>
+                            <h5 class="mb-0 fw-bold text-warning">@Model.Count(p => p.Inventario < 10)</h5>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 rounded-3 p-2">
+                            <i class="fas fa-exclamation-triangle text-warning" style="font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-bottom py-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-start">
+                            <h5 class="mb-0">
+                                <i class="fas fa-list me-2 text-primary"></i>Lista de Productos
+                            </h5>
+                            <span class="badge bg-primary rounded-pill ms-2">@Model.Count()</span>
+                        </div>
+                        <a href="@Url.Action("Create")" class="btn btn-primary d-flex align-items-center gap-2">
+                            <i class="fas fa-plus-circle"></i>
+                            <span class="d-none d-sm-inline">Crear Producto</span>
+                            <span class="d-inline d-sm-none">Crear</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-4 py-3">
+                                        <i class="fas fa-tag me-1"></i>Nombre
+                                    </th>
+                                    <th class="px-4 py-3">
+                                        <i class="fas fa-dollar-sign me-1"></i>Precio
+                                    </th>
+                                    <th class="px-4 py-3">
+                                        <i class="fas fa-warehouse me-1"></i>Inventario
+                                    </th>
+                                    <th class="px-4 py-3">
+                                        <i class="fas fa-toggle-on me-1"></i>Estado
+                                    </th>
+                                    <th class="px-4 py-3 text-center">
+                                        <i class="fas fa-gear me-1"></i>Acciones
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var p in Model)
+                                    {
+                                        <tr>
+                                            <td class="px-4 py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="bg-light rounded p-2 me-2">
+                                                        <i class="fas fa-box text-muted"></i>
+                                                    </div>
+                                                    <span class="fw-semibold">@p.Nombre</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <span class="badge bg-success-subtle text-success-emphasis px-3 py-2">
+                                                    ₡@p.Precio.ToString("N2")
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                @if (p.Inventario < 10)
+                                                {
+                                                    <span class="badge bg-warning text-dark px-3 py-2">
+                                                        <i class="fas fa-exclamation-triangle me-1"></i>@p.Inventario
+                                                    </span>
+                                                }
+                                                else if (p.Inventario < 50)
+                                                {
+                                                    <span class="badge bg-info-subtle text-dark px-3 py-2">
+                                                        <i class="fas fa-info-circle me-1"></i>@p.Inventario
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success px-3 py-2">
+                                                        <i class="fas fa-check-circle me-1"></i>@p.Inventario
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                @if (p.Activo)
+                                                {
+                                                    <span class="badge bg-success px-3 py-2">
+                                                        <i class="fas fa-check-circle me-1"></i>Activo
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger px-3 py-2">
+                                                        <i class="fas fa-times-circle me-1"></i>Inactivo
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <div class="d-flex gap-2 justify-content-center">
+                                                    <a href="@Url.Action("Edit", new { id = p.Id })" 
+                                                       class="btn btn-warning btn d-flex align-items-center gap-1"
+                                                       title="Editar producto">
+                                                        <i class="fas fa-edit"></i>
+                                                     
+                                                    </a>
+                                                    <a href="@Url.Action("Delete", new { id = p.Id })" 
+                                                       class="btn btn-danger btn d-flex align-items-center gap-1"
+                                                       onclick="return confirmDelete(event);"
+                                                       title="Eliminar producto">
+                                                        <i class="fas fa-trash-alt"></i>
+                                               
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center py-5">
+                                            <div class="text-muted">
+                                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                                <p class="mb-0">No hay productos disponibles</p>
+                                                <a href="@Url.Action("Create")" class="btn btn-primary mt-3">
+                                                    <i class="fas fa-plus me-1"></i>Crear primer producto
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        function confirmDelete(event) {
+            event.preventDefault();
+
+            const targetUrl = event.currentTarget.href;
+
+            App.modal.showDeleteConfirmation({
+                title: 'Eliminar producto',
+                message: '¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.',
+                confirmText: 'Sí, eliminar',
+                cancelText: 'Cancelar',
+                onConfirm: function() {
+                    window.location.href = targetUrl;
+                }
+            });
+        }
+    </script>
+}

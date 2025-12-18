@@ -1,0 +1,56 @@
+﻿@model List<ProyectoProgramacionAvanzada.Models.Orden>
+
+@{
+    ViewBag.Title = "Historial de Órdenes";
+}
+
+@section Breadcrumbs {
+    <li class="breadcrumb-item">
+        <a>
+            <i class="fas fa-history me-1"></i>Historial
+        </a>
+    </li>
+}
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">
+        No tienes órdenes registradas.
+    </div>
+
+    <a href="@Url.Action("Index", "Product")" class="btn btn-primary">
+        Ir al catálogo
+    </a>
+
+    return;
+}
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Número de Orden</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var orden in Model)
+        {
+            <tr>
+                <td>@orden.Id</td>
+                <td>@orden.FechaOrden.ToString("dd/MM/yyyy hh:mm tt")</td>
+                <td>₡@orden.Total</td>
+                <td>@orden.Estado</td>
+                <td>
+                    <a href="@Url.Action("Details", new { id = orden.Id })"
+                       class="btn btn-info btn-sm">
+                        Ver detalles
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

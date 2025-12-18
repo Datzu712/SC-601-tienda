@@ -1,0 +1,51 @@
+﻿@model ProyectoProgramacionAvanzada.Models.Orden
+
+@{
+    ViewBag.Title = "Detalles de la Orden #" + Model.Id;
+}
+
+@section Breadcrumbs {
+    <li class="breadcrumb-item">
+        <a href="@Url.Action("Index")">
+            <i class="fas fa-clock-rotate-left me-1"></i>Historial
+        </a>
+    </li>
+    <li class="breadcrumb-item active">
+        <i class="fas fa-file-lines me-1"></i>Detalles
+    </li>
+}
+<div class="card p-4">
+
+    <p><strong>Fecha:</strong> @Model.FechaOrden.ToString("dd/MM/yyyy hh:mm tt")</p>
+    <p><strong>Total:</strong> ₡@Model.Total</p>
+    <p><strong>Estado:</strong> @Model.Estado</p>
+
+    <hr />
+
+    <h4>Productos Comprados</h4>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var d in Model.Detalles)
+            {
+                <tr>
+                    <td>@d.Producto.Nombre</td>
+                    <td>@d.Cantidad</td>
+                    <td>₡@d.PrecioUnitario</td>
+                    <td>₡@(d.Cantidad * d.PrecioUnitario)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a href="@Url.Action("Index")" class="btn btn-secondary mt-3">Volver al historial</a>
+</div>
