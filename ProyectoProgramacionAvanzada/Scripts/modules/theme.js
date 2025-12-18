@@ -1,20 +1,27 @@
 // todo: add jsoc (alta pereza)
 export class ThemeManager {
-    constructor() {
-        this.toggleButton = null;
-        this.icon = null;
+    toggleButton = null
+    currentIcon = null
+
+    /**
+     * Creates an instance of ThemeManager.
+     * @param {string|HTMLElement} toggleButtonOrId The toggle button element or its ID
+     */
+    constructor(toggleButtonOrId) {
+        if (toggleButtonOrId) {
+            if (typeof toggleButtonOrId === 'string') {
+                this.toggleButton = document.getElementById(toggleButtonOrId);
+            } else if (toggleButtonOrId instanceof HTMLElement) {
+                this.toggleButton = toggleButtonOrId;
+            }
+            this.currentIcon = this.toggleButton?.querySelector('i');
+        }
     }
 
     init() {
         //this.loadTheme(); already loaded in the layout
-        this.bindElements();
         this.bindEvents();
         this.updateIcon();
-    }
-
-    bindElements() {
-        this.toggleButton = document.getElementById('theme-toggle');
-        this.icon = this.toggleButton?.querySelector('i');
     }
 
     bindEvents() {
@@ -33,6 +40,10 @@ export class ThemeManager {
         const newTheme = this.toggleTheme();
         this.updateIcon();
         this.dispatchThemeChange(newTheme);
+        new Promise((resolve) => setTimeout(() => {
+            App.notifications.showToast(`Switched to ${newTheme} theme`, { delay: 1000 });
+            resolve();
+        }, 100));
     }
 
     handleSystemThemeChange(event) {
@@ -44,9 +55,9 @@ export class ThemeManager {
     }
 
     updateIcon() {
-        if (!this.icon) return;
+        if (!this.currentIcon) return;
         const currentTheme = this.getCurrentTheme();
-        this.icon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        this.currentIcon.className = currentTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
     }
 
     dispatchThemeChange(theme) {

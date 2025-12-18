@@ -38,7 +38,7 @@ export const TOAST_CONFIG = Object.freeze({
         title: 'Notification',
         delay: 5000,
         autohide: true,
-        type: 'info'
+        type: 'info',
     }),
 });
 
@@ -183,7 +183,7 @@ export class ToastManager {
         const toastId = `app-toast-${++this.#toastIdsIncremental}`;
         const toastDiv = document.createElement('div');
         toastDiv.id = toastId;
-        toastDiv.className = 'toast mt-2';
+        toastDiv.className = `toast mt-2`;
         toastDiv.setAttribute('role', 'alert');
         toastDiv.setAttribute('aria-live', 'polite');
         toastDiv.setAttribute('aria-atomic', 'true');

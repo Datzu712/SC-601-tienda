@@ -13,6 +13,84 @@
 }
 
 <div class="container-fluid">
+    @if (Model.Count > 0)
+    {
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Estadísticas de Órdenes
+                        </h5>
+                        
+                        <div class="btn-group btn-group-sm ms-3" role="group">
+                            <button type="button" class="btn btn-light" data-period="week">
+                                <i class="fas fa-calendar-week me-1"></i>Semana
+                            </button>
+                            <button type="button" class="btn btn-light active" data-period="month">
+                                <i class="fas fa-calendar-alt me-1"></i>Mes
+                            </button>
+                            <button type="button" class="btn btn-light" data-period="year">
+                                <i class="fas fa-calendar me-1"></i>Año
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id="chartsContainer">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-success text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="text-uppercase mb-1">Total Gastado</h6>
+                                            <h3 class="mb-0" id="totalSales">₡0.00</h3>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-dollar-sign fa-3x opacity-50"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-info text-white">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="text-uppercase mb-1">Total Órdenes</h6>
+                                            <h3 class="mb-0" id="totalOrders">0</h3>
+                                        </div>
+                                        <div>
+                                            <i class="fas fa-shopping-bag fa-3x opacity-50"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráficos -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="chart-container" style="position: relative; height: 300px;">
+                                <canvas id="salesChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    }
+
+    <!-- Table -->
     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow-sm">
@@ -133,11 +211,6 @@
 </div>
 
 @section Scripts {
-    <script>
-        // Inicializar tooltips de Bootstrap
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+    <script type="module" src="~/Scripts/order-stats.js"></script>
 }
