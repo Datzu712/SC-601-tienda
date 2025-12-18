@@ -1,0 +1,390 @@
+﻿@{
+    ViewBag.Title = "Demo de Componentes";
+}
+
+<div class="container-fluid py-4">
+    <!-- ToastManager Demo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-bell me-2"></i>ToastManager</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text mb-3">Gestión de notificaciones tipo toast.</p>
+                    <div class="row g-2">
+                        <div class="col-md-3 col-sm-6">
+                            <button id="btnToastSuccess" class="btn btn-success w-100">
+                                <i class="fas fa-check-circle me-1"></i> Toast Success
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <button id="btnToastError" class="btn btn-danger w-100">
+                                <i class="fas fa-times-circle me-1"></i> Toast Error
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <button id="btnToastWarning" class="btn btn-warning w-100">
+                                <i class="fas fa-exclamation-triangle me-1"></i> Toast Warning
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <button id="btnToastInfo" class="btn btn-info w-100">
+                                <i class="fas fa-info-circle me-1"></i> Toast Info
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row g-2 mt-2">
+                        <div class="col-md-12">
+                            <button id="btnHideAllToasts" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-eye-slash me-1"></i> Ocultar Todos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Manager Demo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-window-restore me-2"></i>ModalManager</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-3 col-sm-6">
+                            <button id="btnModalConfirm" class="btn btn-primary w-100">
+                                <i class="fas fa-question-circle me-1"></i> Modal Confirmación
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <button id="btnModalDelete" class="btn btn-danger w-100">
+                                <i class="fas fa-trash-alt me-1"></i> Modal Eliminar
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <button id="btnModalWarning" class="btn btn-warning w-100">
+                                <i class="fas fa-exclamation-triangle me-1"></i> Modal Advertencia
+                            </button>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <button id="btnModalSuccess" class="btn btn-success w-100">
+                                <i class="fas fa-check-circle me-1"></i> Modal Éxito
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row g-2 mt-2">
+                        <div class="col-12">
+                            <button id="btnModalCustom" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-magic me-1"></i> Modal Personalizado
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataFetcher Demo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-download me-2"></i>DataFetcher API</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text mb-3">Sistema de fetching reactivo que se ejecuta automáticamente al cambiar el estado.</p>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="searchInput" class="form-label">
+                                <i class="fas fa-search me-1"></i>Búsqueda
+                            </label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Escribe para buscar...">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="pageInput" class="form-label">
+                                <i class="fas fa-file me-1"></i>Página
+                            </label>
+                            <input type="number" class="form-control" id="pageInput" value="1" min="1">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-12 d-flex justify-content-between">
+                            <button id="btnTriggerFetch" class="btn btn-info">
+                                <i class="fas fa-sync-alt me-1"></i> Actualizar Estado (Trigger Fetch)
+                            </button>
+                            <button id="btnManualFetch" class="btn btn-outline-info">
+                                <i class="fas fa-download me-1"></i> Fetch Manual
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-secondary" role="alert">
+                        <h6 class="alert-heading"><i class="fas fa-info-circle me-1"></i>Estado Actual</h6>
+                        <pre id="stateDisplay" class="mb-0 text-wrap"></pre>
+                    </div>
+
+                    <div class="alert alert-light border" role="alert">
+                        <h6 class="alert-heading"><i class="fas fa-database me-1"></i>Respuesta del Servidor</h6>
+                        <pre id="responseDisplay" class="mb-0 text-wrap"></pre>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h6><i class="fas fa-redo-alt me-1"></i>Prueba de Reintentos</h6>
+                    <p class="text-muted small">Este endpoint siempre devuelve error 400. El DataFetcher intentará 3 veces con 1 segundo entre reintentos.</p>
+                    <button id="btnTestRetry" class="btn btn-danger">
+                        <i class="fas fa-exclamation-triangle me-1"></i> Probar Reintentos (Error 400)
+                    </button>
+                    <div class="alert alert-warning mt-3 d-none" id="retryAlert">
+                        <h6 class="alert-heading"><i class="fas fa-sync-alt me-1"></i>Log de Reintentos</h6>
+                        <div id="retryLog" class="small"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Demo -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0"><i class="fas fa-palette me-2"></i>Theme Manager</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text mb-3">Use el boton de abajo a la derecha:</p>
+                    <button id="btnToggleThemeDemo" class="btn btn-outline-dark">
+                        <i class="fas fa-adjust me-1"></i> Alternar Tema
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="module">
+        import { DataFetcher } from '/Scripts/modules/api.js';
+        
+        // toasts
+        document.getElementById('btnToastSuccess').addEventListener('click', () => {
+            App.notifications.showToast('toast de tipo "success"', {
+                type: 'success',
+                title: 'Éxito',
+                delay: 3000
+            });
+        });
+
+        document.getElementById('btnToastError').addEventListener('click', () => {
+            App.notifications.showToast('toast de tipo "error"', {
+                type: 'error',
+                title: 'Error',
+                delay: 4000
+            });
+        });
+
+        document.getElementById('btnToastWarning').addEventListener('click', () => {
+            App.notifications.showToast('toast de tipo "warning"', {
+                type: 'warning',
+                title: 'Advertencia',
+                delay: 5000
+            });
+        });
+
+        document.getElementById('btnToastInfo').addEventListener('click', () => {
+            App.notifications.showToast('toast de tipo "info"', {
+                type: 'info',
+                title: 'Información',
+                delay: 3000
+            });
+        });
+
+        document.getElementById('btnHideAllToasts').addEventListener('click', () => {
+            App.notifications.hideToasts();
+        });
+
+        // modales
+        document.getElementById('btnModalConfirm').addEventListener('click', () => {
+            App.modal.showConfirmation({
+                title: 'Confirmación',
+                message: '¿Estás seguro de que deseas continuar con esta acción?',
+                confirmText: 'Sí, continuar',
+                cancelText: 'No, cancelar',
+                onConfirm: () => {
+                    App.notifications.showToast('Acción confirmada', { type: 'success' });
+                },
+                onCancel: () => {
+                    App.notifications.showToast('Acción cancelada', { type: 'info' });
+                }
+            });
+        });
+
+        document.getElementById('btnModalDelete').addEventListener('click', () => {
+            App.modal.showDeleteConfirmation({
+                message: '¿Estás seguro de que deseas eliminar este elemento? Esta acción no se puede deshacer.',
+                onConfirm: () => {
+                    App.notifications.showToast('Elemento eliminado', { type: 'success' });
+                }
+            });
+        });
+
+        document.getElementById('btnModalWarning').addEventListener('click', () => {
+            App.modal.showWarningConfirmation({
+                message: 'Esta acción puede tener consecuencias. ¿Deseas proceder?',
+                confirmText: 'Sí, proceder',
+                onConfirm: () => {
+                    App.notifications.showToast('Advertencia aceptada', { type: 'warning' });
+                }
+            });
+        });
+
+        document.getElementById('btnModalSuccess').addEventListener('click', () => {
+            App.modal.showSuccessConfirmation({
+                title: 'Operación Completada',
+                message: '¿Deseas realizar otra acción similar?',
+                confirmText: 'Sí, repetir',
+                onConfirm: () => {
+                    App.notifications.showToast('Repetir acción', { type: 'success' });
+                }
+            });
+        });
+
+        document.getElementById('btnModalCustom').addEventListener('click', () => {
+            App.modal.showConfirmation({
+                title: 'Modal Personalizado',
+                message: '<div class="text-center"><i class="fas fa-rocket fa-3x text-primary mb-3"></i><p>Este es un modal con HTML personalizado.</p></div>',
+                confirmText: 'Aceptar',
+                cancelText: 'Rechazar',
+                confirmClass: 'btn-primary',
+                icon: 'fa-rocket',
+                onConfirm: () => App.notifications.showToast('¡Personalización exitosa!', { type: 'success', title: '🎨 Custom' }),
+                onCancel: () => App.notifications.showToast('Acción rechazada', { type: 'error', title: '❌ Custom'}),
+            });
+        });
+
+        // dataFetcher demo
+        const searchInput = document.getElementById('searchInput');
+        const pageInput = document.getElementById('pageInput');
+        const stateDisplay = document.getElementById('stateDisplay');
+        const responseDisplay = document.getElementById('responseDisplay');
+        
+        const fetcher = new DataFetcher(
+            { search: '', page: 1 },
+            {
+                endpoint: '@Url.Action("GetTestData", "Test")',
+                fetchOnMount: false,
+                fetchOnWindowFocus: true,
+                retry: 3,
+                retryDelay: 1000,
+                onSuccess: (data) => {
+                    responseDisplay.textContent = JSON.stringify(data, null, 2);
+                    App.notifications.showToast('Datos obtenidos correctamente', {
+                        type: 'success',
+                        title: 'API Success',
+                        delay: 2000
+                    });
+                },
+                onError: (error) => {
+                    responseDisplay.textContent = `Error: ${error.message}`;
+                    App.notifications.showToast('Error al obtener datos', {
+                        type: 'error',
+                        title: 'API Error'
+                    });
+                }
+            }
+        );
+        window.testDataFetcher = fetcher;
+        
+        function updateStateDisplay() {
+            stateDisplay.textContent = JSON.stringify(fetcher.data, null, 2);
+        }
+        updateStateDisplay();
+        
+        // btn para actualizar estado y disparar fetch (si el objeto cambia)
+        document.getElementById('btnTriggerFetch').addEventListener('click', () => {
+            fetcher.data.search = searchInput.value;
+            fetcher.data.page = parseInt(pageInput.value) || 1;
+            updateStateDisplay();
+        });
+
+        // btn para forzar fetch manual
+        document.getElementById('btnManualFetch').addEventListener('click', async () => {
+            try {
+                const currentState = {
+                    search: searchInput.value,
+                    page: parseInt(pageInput.value) || 1
+                };
+                const result = await fetcher.fetchData(currentState);
+                console.log('Manual fetch result:', result);
+            } catch (error) {
+                console.error('Manual fetch error:', error);
+            }
+        });
+
+        // retry fetcher demo
+        document.getElementById('btnTestRetry').addEventListener('click', async () => {
+            const retryAlert = document.getElementById('retryAlert');
+            const retryLog = document.getElementById('retryLog');
+            const btn = document.getElementById('btnTestRetry');
+            
+            // cleanup previous logs
+            retryLog.innerHTML = '';
+            retryAlert.classList.remove('d-none');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Intentando...';
+            
+            let attemptCount = 0;
+
+            const retryFetcher = new DataFetcher(
+                {},
+                {
+                    endpoint: '@Url.Action("GetErrorData", "Test")',
+                    retry: 3,
+                    retryDelay: 1000,
+                    fetchOnMount: false,
+                    fetchOnWindowFocus: false,
+                    onError: (error) => {
+                        attemptCount++;
+                        const timestamp = new Date().toLocaleTimeString();
+                        retryLog.innerHTML += `<div class="text-danger">[${timestamp}] Intento ${attemptCount} falló: ${error.message}</div>`;
+                        
+                        if (attemptCount >= 3) {
+                            retryLog.innerHTML += `<div class="text-danger fw-bold mt-2">Todos los reintentos agotados después de ${attemptCount} intentos</div>`;
+                            App.notifications.showToast('Reintentos agotados', {
+                                type: 'error',
+                                title: 'Error',
+                                delay: 3000
+                            });
+                            btn.disabled = false;
+                            btn.innerHTML = '<i class="fas fa-exclamation-triangle me-1"></i> Probar Reintentos (Error 400)';
+                            attemptCount = 0;
+                        } else {
+                            retryLog.innerHTML += `<div class="text-info">Reintentando en 1 segundo...</div>`;
+                        }
+                    }
+                }
+            );
+            
+            try {
+                await retryFetcher.fetchData({});
+            } catch (error) {
+                console.error('Retry test final error:', error);
+            }
+        });
+        
+        setTimeout(() => {
+            App.notifications.showToast('Bienvenido a la demo de módulos JS', {
+                type: 'info',
+                title: '👋 Hola',
+                delay: 4000
+            });
+        }, 500);
+    </script>
+}
+
