@@ -4,6 +4,7 @@
  *
  * @typedef {Object} QueryOptions - Options for configuring the data fetch query.
  * @property {Function} queryFn - The function to fetch data.
+ * @property {string} endpoint - The endpoint to fetch data from (then queryFn would be not necessary).
  * @property {Function} onSuccess - Callback function on successful data fetch.
  * @property {Function} onError - Callback function on data fetch error.
  * @property {number | false} [retry=5] - Whether to retry on failure.
@@ -40,8 +41,13 @@ export class DataFetcher {
      * @param {QueryOptions} options - Configuration options for the data fetch query.
      */
     constructor(state, options) {
-        if (!options || typeof options.queryFn !== 'function') {
-            throw new Error('A valid queryFn function must be provided in options.');
+        let queryFn = options.queryFn;
+        if (options.endpoint) {
+            queryFn = this.#abstractQueryFn.bind({}, options.endpoint);
+        }
+        
+        if (!options || typeof queryFn !== 'function') {
+            throw new Error('A valid options.queryFn function must be provided in options. Or specify an endpoint string.');
         }
         
         if (options.onSuccess && typeof options.onSuccess !== 'function') {
@@ -58,21 +64,24 @@ export class DataFetcher {
             enabled: true,
             fetchOnMount: true,
             fetchOnWindowFocus: true,
-            ...options
+            ...options,
+            queryFn,
         };
 
         this.#previousOriginalState = state;
         this.data = new Proxy(state, {
             set: (target, prop, value, receiver) => {
-                // avoid unnecessary updates
-                if (value && JSON.stringify(value) === JSON.stringify(this.#previousOriginalState)) {
+                this.#previousOriginalState = { ...target };
+                
+                const result = Reflect.set(target, prop, value, receiver);
+                
+                if (JSON.stringify(target) === JSON.stringify(this.#previousOriginalState)) {
                     console.debug('DataFetcher: No changes detected in state, skipping fetch.');
-                    return true;
+                    return result;
                 }
+                this.fetchData(target).catch(() => undefined);
 
-                this.fetchData(value).catch(() => undefined);
-                this.#previousOriginalState = value;
-                return Reflect.set(target, prop, value, receiver);
+                return result;
             },
         });
         
@@ -89,6 +98,7 @@ export class DataFetcher {
             const res = await this.#options.queryFn(currentState);
             
             if (this.#options.onSuccess) {
+                console.debug('DataFetcher: Triggering onSuccess callback.');
                 this.#options.onSuccess(res);
             }
             
@@ -128,6 +138,26 @@ export class DataFetcher {
             });
         }
     }
+
+    /**
+     * 
+     * @param { string } endpoint - HTTP endpoint to send the request to.
+     * @param { T } currentState - Current state to be sent in the request body.
+     */
+    async #abstractQueryFn(endpoint, currentState) {
+        const params = new URLSearchParams(currentState).toString();
+        
+        const response = await fetch(`${endpoint}?${params}`, {
+            method: 'GET',
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+        }
+
+        return await response.json();
+    }
+        
     
     // todo: add method detroy to remove event listeners
 }

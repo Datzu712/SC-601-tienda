@@ -371,6 +371,7 @@
     <Content Include="Scripts\modules\modals.js" />
     <Content Include="Scripts\modules\sidebar.js" />
     <Content Include="Scripts\modules\toast.js" />
+    <Content Include="Scripts\order-stats.js" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
     <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
