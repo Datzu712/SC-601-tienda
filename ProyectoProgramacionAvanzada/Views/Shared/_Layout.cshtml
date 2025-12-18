@@ -84,6 +84,10 @@
             font-size: 1.5rem;
         }
      
+        * {
+            transition: background-color 0.3s ease, color 0.5s ease, border-color 0.1s ease, box-shadow 0.3s ease, fill 0.3s ease, stroke 0.3s ease;
+        }
+        
         @@media (max-width: 768px) {
             .sidebar {
                 margin-left: -280px;
@@ -113,7 +117,7 @@
 </head>
 <body>
     <!-- Sidebar -->
-    <aside class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark sidebar bg-body-tertiary border-end vh-100" id="sidebar" style="width: 280px;">
+    <aside class=" d-flex flex-column flex-shrink-0 p-3 text-bg-dark sidebar border-end vh-100" id="sidebar" style="width: 280px;">
         @Html.ActionLink("Tienda", "Index", "Product", new { area = "" }, new { @class = "d-flex align-items-center mb-4 mb-md-0 me-md-auto text-white text-decoration-none" })
         <hr>
         <ul class="nav nav-pills flex-column mb-auto">
@@ -224,7 +228,7 @@
         </header>
         
         <!-- Page content -->
-        <div class="container-fluid p-4 bg-body">
+        <div class="container-fluid p-4 bg-body-tertiary">
             @RenderBody()
         </div>
     </main>
